@@ -29,19 +29,44 @@ class Distributeur:
 		phrase = ""
 		i = 1
 		for boisson in self.boissons:
-			phrase+="Boisson n°{} :\n{} \nQuantité restante: {}\n\n".format(i,boisson,self.quantite[boisson.nom])
+			phrase+="\nBoisson n°{} :\n{} \nQuantité restante: {}\n\n".format(i,boisson,self.quantite[boisson.nom])
 			i = i+1
 		return phrase
 
 	def demandeAffichageBoissons(self, reponseUti):
 		newReponseUti = reponseUti.lower().replace(" ", "")
 		if newReponseUti.lower() == "oui":
-			return self.__str__()
+			print(self.__str__())
+			return self.verifChoixUtilisateur(input("Pour commander une boisson, entrez son numéro dans la console : "))
+
 		elif newReponseUti.lower() == "non":
 			return "Merci de votre visite, à bientôt !"
-		else:
-			return "Désolé, je n'ai pas compris votre réponse. Merci de réessayer. "
 
+		while newReponseUti != "oui" and newReponseUti != "non":
+			return self.demandeAffichageBoissons(input("Désolé, je n'ai pas compris votre réponse. Merci de réessayer. "))
+
+	
+
+
+	def verifChoixUtilisateur(self, reponseUti):
+		try:
+
+			newReponseUti = int(reponseUti.replace(" ", ""))
+			for i in range(0,len(self.boissons)):
+				if (i + 1) == newReponseUti:
+					if self.quantite[self.boissons[i].nom] > 0:
+						return self.commandeBoisson(input("Êtes-vous sûr de vouloir commander la boisson {} ?".format(self.boissons[i].nom)).lower().replace(" ",""))
+					else:
+						return self.verifChoixUtilisateur(input("Cette boisson n'est malheureusement plus en stock ! Veuillez en choisir une autre. "))
+			return self.verifChoixUtilisateur(input("Cette boisson n'existe pas. Veuillez entrer un autre numéro. "))	
+
+		except Exception as e:
+			 self.verifChoixUtilisateur(input("Ceci n'est pas un numéro. Merci d'entrer le numéro d'une boisson. "))
+		
+	
+	#pour test
+	def commandeBoisson(self, reponseUti):
+		print(reponseUti)
 
 
 		# phrase = "Voici les boissons disponibles : \n\n"

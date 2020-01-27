@@ -12,10 +12,12 @@ slurm = Boisson("Slurm", "Soda")
 distri = Distributeur(superPorp, durianJuice, duff, slurm)
 
 print("Bonjour ! Bienvenue au Distri'Boisson !")
-reponseUti = ""
-while reponseUti != "non" and reponseUti != "oui":
-	reponseUti = input("Voulez-vous voir la liste des boissons ? (oui/non) ").lower().replace(" ", "")
-	print(distri.demandeAffichageBoissons(reponseUti))
+
+print(distri.demandeAffichageBoissons(input("Voulez-vous voir la liste des boissons ? (oui/non) ").lower().replace(" ", "")))
+
+
+
+
 
 
 
