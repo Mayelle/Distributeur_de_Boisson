@@ -50,15 +50,24 @@ class Distributeur:
 
 	def verifChoixUtilisateur(self, reponseUti):
 		try:
-
+			verif = False
 			newReponseUti = int(reponseUti.replace(" ", ""))
 			for i in range(0,len(self.boissons)):
 				if (i + 1) == newReponseUti:
+					verif = True
 					if self.quantite[self.boissons[i].nom] > 0:
-						return self.commandeBoisson(input("Êtes-vous sûr de vouloir commander la boisson {} ?".format(self.boissons[i].nom)).lower().replace(" ",""))
+						confirmationUti = input("Êtes-vous sûr de vouloir commander la boisson {} (oui/ non)? ".format(self.boissons[i].nom)).lower().replace(" ","")
+						while confirmationUti != "oui" and confirmationUti != "non":
+							confirmationUti = input("Je n'ai pas compris votre réponse. Merci de recommencer").lower().replace(" ", "")
+						if confirmationUti == "oui":
+							self.commandeBoisson(newReponseUti)
+						else:
+							return self.verifChoixUtilisateur(input("Pour commander une boisson, entrez son numéro dans la console : "))
+						
 					else:
 						return self.verifChoixUtilisateur(input("Cette boisson n'est malheureusement plus en stock ! Veuillez en choisir une autre. "))
-			return self.verifChoixUtilisateur(input("Cette boisson n'existe pas. Veuillez entrer un autre numéro. "))	
+			if verif == False:
+				return self.verifChoixUtilisateur(input("Cette boisson n'existe pas. Veuillez entrer un autre numéro. "))	
 
 		except Exception as e:
 			 self.verifChoixUtilisateur(input("Ceci n'est pas un numéro. Merci d'entrer le numéro d'une boisson. "))
@@ -66,7 +75,20 @@ class Distributeur:
 	
 	#pour test
 	def commandeBoisson(self, reponseUti):
-		print(reponseUti)
+		print("Voici votre boisson. Bonne dégustation !")
+		self.quantite[self.boissons[reponseUti-1].nom] = self.quantite[self.boissons[reponseUti-1].nom] - 1
+		recommencer = input("Voulez-vous commander une autre boisson ? (oui / non) ").lower().replace(" ", "")
+		while recommencer != "oui" and recommencer != "non":
+			recommencer = input("Je n'ai pas compris votre réponse. Merci de recommencer. ")
+		if recommencer == "oui":
+			self.demandeAffichageBoissons(recommencer)
+		else:
+			print("Merci de votre visite, à bientôt !")
+			pass
+
+
+
+
 
 
 		# phrase = "Voici les boissons disponibles : \n\n"
