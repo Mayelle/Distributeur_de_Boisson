@@ -9,8 +9,8 @@ slurm = Boisson("Slurm", "Soda")
 
 
 #Dictionnaire d'objets qui ont comme "attribut" une quantité
-#distri = Distributeur(superPorp, durianJuice, duff, slurm)
 distri = Distributeur(superPorp, durianJuice, duff, slurm)
+
 print(distri)
 
 

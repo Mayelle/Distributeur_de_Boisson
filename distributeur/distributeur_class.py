@@ -2,7 +2,7 @@ class Boisson:
 	"""docstring for Boisson"""
 
 	#Constructeur paramétré	
-	def __init__(self, nom="Coca", typeB="Soda", prix=2):
+	def __init__(self, nom="Evian", typeB="Eau minérale", prix=2):
 		self.nom = nom
 		self.typeB = typeB
 		self.prix = prix
@@ -17,16 +17,19 @@ class Distributeur:
 	
 	#Constructeur paramétré
 	def __init__(self, *args):
-		self.boissonsD = []
+		self.boissons = []
 		for arg in args:
-			self.boissonsD.append(arg)
+			self.boissons.append(arg)
+		self.quantite = {}
+		for boisson in self.boissons:
+			self.quantite[boisson.nom] = 5 
 		
 
 	def __str__(self):
 		phrase = ""
 		i = 1
-		for boisson in self.boissonsD:
-			phrase+="Boisson n°{} : {} \n".format(i,boisson)
+		for boisson in self.boissons:
+			phrase+="Boisson n°{} :\n{} \nQuantité restante: {}\n\n".format(i,boisson,self.quantite[boisson.nom])
 			i = i+1
 		return phrase
 
