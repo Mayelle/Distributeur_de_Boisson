@@ -11,13 +11,16 @@ slurm = Boisson("Slurm", "Soda")
 #Dictionnaire d'objets qui ont comme "attribut" une quantité
 distri = Distributeur(superPorp, durianJuice, duff, slurm)
 
-print(distri)
+print("Bonjour ! Bienvenue au Distri'Boisson !")
+reponseUti = ""
+while reponseUti != "non" and reponseUti != "oui":
+	reponseUti = input("Voulez-vous voir la liste des boissons ? (oui/non) ").lower().replace(" ", "")
+	print(distri.demandeAffichageBoissons(reponseUti))
 
 
 
 
-# print("Bonjour ! Bienvenue au Distri'Boisson !")
-# reponseUti = input(" Appuyez sur \'B\' pour voir la liste des boissons proposées. \n Appuyez sur \'X\' pour partir.")
+
 # module = ""
 
 # while module != "Exit":

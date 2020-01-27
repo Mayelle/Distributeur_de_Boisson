@@ -33,6 +33,15 @@ class Distributeur:
 			i = i+1
 		return phrase
 
+	def demandeAffichageBoissons(self, reponseUti):
+		newReponseUti = reponseUti.lower().replace(" ", "")
+		if newReponseUti.lower() == "oui":
+			return self.__str__()
+		elif newReponseUti.lower() == "non":
+			return "Merci de votre visite, à bientôt !"
+		else:
+			return "Désolé, je n'ai pas compris votre réponse. Merci de réessayer. "
+
 
 
 		# phrase = "Voici les boissons disponibles : \n\n"
