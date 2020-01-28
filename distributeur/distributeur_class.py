@@ -10,12 +10,30 @@ class Boisson:
 	def __str__(self):
 		return "Nom : {} \nType : {} \nPrix : {}€".format(self.nom, self.typeB, self.prix) 
 
+		
 	
 class Distributeur:
 
 	"""docstring for Distributeur"""
 	
-	#Constructeur paramétré
+	REPONSES = {
+	"mauvaise_entree":"Désolé, je n'ai pas compris votre réponse. Merci de réessayer.",
+	"bienvenue":"Bonjour ! Bienvenue au Distri'Boisson !",
+	"liste_boissons": "Voulez-vous voir la liste des boissons ? (oui/non)",
+	"au_revoir": "Merci de votre visite, à bientôt !",
+	"commande_boisson": "Pour commander une boisson, entrez son numéro dans la console : ",
+	"non_existante": "Cette boisson n'existe pas. Veuillez entrer un autre numéro. ",
+	"rupture_stock": "Cette boisson n'est malheureusement plus en stock ! Veuillez en choisir une autre.",
+	"confirmation_choix": "Êtes-vous sûr de vouloir commander la boisson {} (oui/ non)? ",
+	"degustation": "Voici votre boisson. Bonne dégustation !",
+	"nouvelle_commande": "Voulez-vous commander une autre boisson ? (oui / non)"
+
+	}
+
+
+
+
+	#Constructeur 
 	def __init__(self, *args):
 		self.boissons = []
 		for arg in args:
@@ -33,58 +51,89 @@ class Distributeur:
 			i = i+1
 		return phrase
 
-	def demandeAffichageBoissons(self, reponseUti):
-		newReponseUti = reponseUti.lower().replace(" ", "")
-		if newReponseUti.lower() == "oui":
+	def _accueilUtilisateur(self):
+		print(self.REPONSES["bienvenue"])
+		self.__demande_affichage_boissons()
+
+
+	def __demande_affichage_boissons(self):
+		"""
+		Ask first question...
+		"""
+		new_reponse_utilisateur = input(self.REPONSES["liste_boissons"]).lower().replace(" ", "")
+		self.__affichage_boissons(new_reponse_utilisateur)
+
+	def __affichage_boissons(self, new_reponse_utilisateur):
+
+		while new_reponse_utilisateur != "oui" and new_reponse_utilisateur != "non":
+			print(self.REPONSES["mauvaise_entree"])
+			return self.__demande_affichage_boissons()
+
+		if new_reponse_utilisateur == "oui":
 			print(self.__str__())
-			return self.verifChoixUtilisateur(input("Pour commander une boisson, entrez son numéro dans la console : "))
+			return self.__verif_choix_utilisateur()
 
-		elif newReponseUti.lower() == "non":
-			return "Merci de votre visite, à bientôt !"
+		else:
+			print(self.REPONSES["au_revoir"])
 
-		while newReponseUti != "oui" and newReponseUti != "non":
-			return self.demandeAffichageBoissons(input("Désolé, je n'ai pas compris votre réponse. Merci de réessayer. "))
+			
 
-	
-
-
-	def verifChoixUtilisateur(self, reponseUti):
+	def __verif_choix_utilisateur(self):
+		reponse_utilisateur = input(self.REPONSES["commande_boisson"])
 		try:
-			verif = False
-			newReponseUti = int(reponseUti.replace(" ", ""))
-			for i in range(0,len(self.boissons)):
-				if (i + 1) == newReponseUti:
-					verif = True
-					if self.quantite[self.boissons[i].nom] > 0:
-						confirmationUti = input("Êtes-vous sûr de vouloir commander la boisson {} (oui/ non)? ".format(self.boissons[i].nom)).lower().replace(" ","")
-						while confirmationUti != "oui" and confirmationUti != "non":
-							confirmationUti = input("Je n'ai pas compris votre réponse. Merci de recommencer").lower().replace(" ", "")
-						if confirmationUti == "oui":
-							self.commandeBoisson(newReponseUti)
-						else:
-							return self.verifChoixUtilisateur(input("Pour commander une boisson, entrez son numéro dans la console : "))
-						
-					else:
-						return self.verifChoixUtilisateur(input("Cette boisson n'est malheureusement plus en stock ! Veuillez en choisir une autre. "))
-			if verif == False:
-				return self.verifChoixUtilisateur(input("Cette boisson n'existe pas. Veuillez entrer un autre numéro. "))	
+			new_reponse_utilisateur = int(reponse_utilisateur.replace(" ", ""))
+
+			try:
+				if new_reponse_utilisateur > 0:
+					nom_boisson_commandee = self.boissons[new_reponse_utilisateur - 1].nom
+					self.__verif_quantite_boisson_restante(nom_boisson_commandee)
+				else:
+					print(self.REPONSES["non_existante"])
+					self.__verif_choix_utilisateur()
+
+			except Exception as e:
+				print(self.REPONSES["non_existante"])
+				self.__verif_choix_utilisateur()	
+		
 
 		except Exception as e:
-			 self.verifChoixUtilisateur(input("Ceci n'est pas un numéro. Merci d'entrer le numéro d'une boisson. "))
+			print(self.REPONSES["mauvaise_entree"])
+			self.__verif_choix_utilisateur()
+
+
+
+	def __verif_quantite_boisson_restante(self, nom_boisson_commandee):
+		if self.quantite[nom_boisson_commandee] > 0:
+			self.__confirmation_utilisateur(nom_boisson_commandee)
+		else:
+			print(self.REPONSES["rupture_stock"])
+			return self.__verif_choix_utilisateur()
+
+	
+	def __confirmation_utilisateur(self, nom_boisson_commandee):
+		reponse_utilisateur = input(self.REPONSES["confirmation_choix"].format(nom_boisson_commandee))
+		while reponse_utilisateur != "oui" and reponse_utilisateur != "non":
+			print(self.REPONSES["mauvaise_entree"])
+			self.__confirmation_utilisateur(nom_boisson_commandee)
+		if reponse_utilisateur.lower().replace(" ", "") == "oui":
+			self.__commande_boisson(nom_boisson_commandee)
+		else:
+			self.__verif_choix_utilisateur()
+
 		
 	
-	#pour test
-	def commandeBoisson(self, reponseUti):
-		print("Voici votre boisson. Bonne dégustation !")
-		self.quantite[self.boissons[reponseUti-1].nom] = self.quantite[self.boissons[reponseUti-1].nom] - 1
-		recommencer = input("Voulez-vous commander une autre boisson ? (oui / non) ").lower().replace(" ", "")
+	def __commande_boisson(self, nom_boisson_commandee):
+		print(self.REPONSES["degustation"])
+		self.quantite[nom_boisson_commandee] -= 1
+		recommencer = input(self.REPONSES["nouvelle_commande"]).lower().replace(" ", "")
 		while recommencer != "oui" and recommencer != "non":
-			recommencer = input("Je n'ai pas compris votre réponse. Merci de recommencer. ")
+			recommencer = input(self.REPONSES["mauvaise_entree"])
 		if recommencer == "oui":
-			self.demandeAffichageBoissons(recommencer)
+			self.__affichage_boissons(recommencer)
 		else:
-			print("Merci de votre visite, à bientôt !")
-			pass
+			print(self.REPONSES["au_revoir"])
+
+
 
 
 
@@ -97,17 +146,17 @@ class Distributeur:
 		# return phrase
 
 	# #Lorsque l'utilisateur souhaite avoir des informations sur une boisson
-	# def infosBoissons(self, reponseUti):
+	# def infosBoissons(self, reponse_utilisateur):
 	# 	infos = "infos"
 
 	# 	#on transforme la réponse de l'utilisateur en enlevant les potentiels espaces et majuscules
-	# 	newReponseUti = reponseUti.lower().replace(" ", "")
+	# 	new_reponse_utilisateur = reponse_utilisateur.lower().replace(" ", "")
 		
 
 	# 	for i in range(0,len(self.boissons) - 1):
 	# 		infos+=str(i+1)
 	# 		#si le numéro choisi par l'utilisateur correspond bien à une boisson, on renvoie les informations demandées
-	# 		if infos == newReponseUti:
+	# 		if infos == new_reponse_utilisateur:
 	# 			return self.boissons[i]
 
 	# 		#on redonne à la variable infos sa valeur d'origine, afin de pouvoir continuer à la tester	
@@ -115,11 +164,11 @@ class Distributeur:
 
 	# 	return False
 	
-	# def verifCommande(self, reponseUti):
+	# def verifCommande(self, reponse_utilisateur):
 
 	# 	for i in range(0,len(self.boissons) - 1):
 	# 		#je vérifie si la boisson commandée se trouve dans mon tableau
-	# 		if reponseUti == i + 1:
+	# 		if reponse_utilisateur == i + 1:
 	# 			#je vérifie si la boisson est toujours en stock
 	# 			if self.boissons[i].quantite > 0:
 	# 			return True
